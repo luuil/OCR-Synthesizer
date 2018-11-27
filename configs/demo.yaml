@@ -1,0 +1,102 @@
+num_outputs: 100 # num of samples to generate
+output_dir: ./data/demo/images
+label_dir: ./data/demo/
+seed: 123
+synthesizers: # list of synthesizers
+  -
+    name: digit_synthesizer
+    weight: 1  # weight of current synthesizer
+    text:
+      - 
+        plaintext:
+          type: VarLengthPlaintext
+          word_list_file: ./words/eng_words.txt # candidate words file or list as below
+          # word_list: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
+          min_length: 1
+          max_length: 2 # num of words for every sample
+          space_rate: 0.0
+        font_dir: ./fonts/eng_fonts
+        text_size_range: [10, 12]
+        opacity_range: [0.85, 1.0]
+        r_range: [230, 255] # color for words
+        g_range: [230, 255]
+        b_range: [230, 255]     
+    background:      
+      type: RandomSelectionBackground
+      image_dir: ./backgrounds/demo # where backgrounds from
+      rois: # rois for crop region from original, and the region is the background candidate
+        - [650, 720, 64, 32]
+        - [722, 720, 64, 32]            
+        - [794, 720, 64, 32]
+    processors: # background pre-processor
+      - 
+        type: GaussianBlurProcessor
+        min_radius: 0
+        max_radius: 1
+      -
+        type: SaltPepperNoiseProcessor
+        noise_proportion: 0.01
+        salt_proportion: 0.5
+      -
+        type: PaddingCropResizeProcessor
+        crop_rois: # [left, top, right, bottom]
+          - [0, 0, 64, 32]
+          - [0, 0, 64, 32]
+          - [0, 0, 63, 32]
+          - [0, 0, 62, 32]
+          - [0, 0, 61, 32]
+        padding_pixels: # [left, top, right, bottom]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [0, 0, 0, 0]
+          - [1, 0, 0, 0]
+          - [0, 1, 0, 0]
+          - [0, 0, 1, 0]
+          - [0, 0, 0, 1]
+          - [1, 1, 1, 1]
+          - [2, 0, 0, 0]
+          - [0, 2, 0, 0]
+          - [0, 0, 2, 0]
+          - [0, 0, 0, 2]
+          - [2, 2, 2, 2]
+        target_size: [64, 32]   
+    layout: 
+      type: HorizontalLayout
+    min_num_segs: 1
+    max_num_segs: 2
+  -
+    name: red_text # another synthesizer
+    weight: 1
+    text:
+      - 
+        plaintext:
+          type: VarLengthPlaintext
+          word_list: ['I', 'love', 'you', 'so', 'much', '!']
+          min_length: 1
+          max_length: 2
+          space_rate: 0.2
+        font_dir: ./fonts/eng_fonts
+        opacity_range: [0.85, 1.0]        
+    text_style:
+        text_size_range: [14, 16]
+        r_range: [230, 255]
+        g_range: [0, 30]
+        b_range: [0, 30]            
+    background:      
+      type: RandomSelectionBackground
+      image_dir: ./backgrounds/demo
+      rois: 
+        - [650, 720, 100, 100]
+        - [650, 752, 100, 100]
+        - [650, 784, 100, 100]  
+    processors:
+      - 
+        type: GaussianBlurProcessor
+        min_radius: 0
+        max_radius: 1
+    layout: 
+      type: HorizontalLayout
+    min_num_segs: 1
+    max_num_segs: 1
